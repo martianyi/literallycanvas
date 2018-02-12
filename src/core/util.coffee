@@ -25,18 +25,24 @@ util =
     return classNames.join(' ')
 
   matchElementSize: (elementToMatch, elementsToResize, scale, callback = ->) ->
-    resize = =>
+    resize = (evt) =>
       for el in elementsToResize
-        el.style.width = "#{elementToMatch.offsetWidth}px"
-        el.style.height = "#{elementToMatch.offsetHeight}px"
+        if evt and evt.detail?
+          if evt.detail.width?
+            el.style.width = "#{evt.detail.width}px"
+          if evt.detail.height?
+            el.style.height = "#{evt.detail.height}px"
+        else
+          el.style.width = "#{elementToMatch.offsetWidth}px"
+          el.style.height = "#{elementToMatch.offsetHeight}px"
         if el.width?
           el.setAttribute('width', el.offsetWidth * scale)
           el.setAttribute('height', el.offsetHeight * scale)
       callback()
 
     elementToMatch.addEventListener 'resize', resize
-    window.addEventListener 'resize', resize
-    window.addEventListener 'orientationchange', resize
+#    window.addEventListener 'resize', resize
+#    window.addEventListener 'orientationchange', resize
     resize()
     return resize
 

@@ -38,6 +38,9 @@ module.exports = class SelectShape extends Tool
           x: x - br.x,
           y: y - br.y
         }
+      else
+        lc.setShapesInProgress []
+        lc.repaintLayer 'main'
 
     onDrag = ({ x, y }) =>
       if @selectedShape?
