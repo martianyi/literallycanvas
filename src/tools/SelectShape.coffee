@@ -1,5 +1,6 @@
 {Tool} = require './base'
 {createShape} = require '../core/shapes'
+SELECT_RECT_SIZE = 25
 
 module.exports = class SelectShape extends Tool
   name: 'SelectShape'
@@ -90,9 +91,10 @@ module.exports = class SelectShape extends Tool
     "000000#{i.toString 16}".slice(-6)
 
   _getPixel: (x, y, lc, ctx) ->
-    p = lc.drawingCoordsToClientCoords x, y
-    pixel = ctx.getImageData(p.x, p.y, 1, 1).data
-    if pixel[3]
+    point = lc.drawingCoordsToClientCoords x, y
+    pixel = ctx.getImageData(point.x, point.y, 1, 1).data
+    pixelVisible = lc.ctx.getImageData(point.x - SELECT_RECT_SIZE / 2, point.y - SELECT_RECT_SIZE / 2, SELECT_RECT_SIZE, SELECT_RECT_SIZE).data
+    if !@_every(pixelVisible, (x) -> x == 0) and pixel[3]
       parseInt @_rgbToHex(pixel[0], pixel[1], pixel[2]), 16
     else
       null
@@ -103,3 +105,8 @@ module.exports = class SelectShape extends Tool
 
   _rgbToHex: (r, g, b) ->
     "#{@_componentToHex(r)}#{@_componentToHex(g)}#{@_componentToHex(b)}"
+
+  _every: (arr, func) ->
+    (return false if not func x) for x in arr
+    return true
+
