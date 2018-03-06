@@ -1,3 +1,4 @@
+actions = require '../core/actions'
 {Tool} = require './base'
 {createShape} = require '../core/shapes'
 SELECT_RECT_SIZE = 25
@@ -39,6 +40,10 @@ module.exports = class SelectShape extends Tool
           x: x - br.x,
           y: y - br.y
         }
+        @initialPosition = {
+          x: br.x,
+          y: br.y
+        }
       else
         lc.setShapesInProgress []
         lc.repaintLayer 'main'
@@ -60,6 +65,18 @@ module.exports = class SelectShape extends Tool
     onUp = ({ x, y }) =>
       if @didDrag
         @didDrag = false
+
+        # get the current position
+        br = @selectedShape.getBoundingRect()
+
+        newPosition = {
+          x: br.x,
+          y: br.y
+        }
+
+        # and add a move action
+        lc.execute(new actions.MoveAction(lc, @selectedShape, @initialPosition, newPosition))
+
         lc.trigger('shapeMoved', { shape: @selectedShape })
         lc.trigger('drawingChange', {})
         lc.repaintLayer('main')
