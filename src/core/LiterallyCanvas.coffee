@@ -487,6 +487,7 @@ module.exports = class LiterallyCanvas
 
     if snapshot.shapes
       @shapes = []
+      @undoStack = []
       for shapeRepr in snapshot.shapes
         shape = JSONToShape(shapeRepr)
         @execute(new actions.AddShapeAction(this, shape)) if shape
